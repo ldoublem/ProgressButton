@@ -1,6 +1,7 @@
 package com.ldoublem.progressButton;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pb_button=(ProgressButton)findViewById(R.id.pb_btn);
+        pb_button.setBgColor(Color.RED);
+        pb_button.setTextColor(Color.WHITE);
+        pb_button.setProColor(Color.WHITE);
+        pb_button.setButtonText("Login in");
     }
 
     @Override

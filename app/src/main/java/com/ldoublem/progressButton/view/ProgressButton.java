@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
@@ -21,7 +22,6 @@ public class ProgressButton extends View {
     private int progerssButtonDuration = 200;
     private int scaleAnimationDuration = 300;
     private int rotateAnimationDuration = 400;
-
 
 
     private Paint paintRectF;
@@ -45,17 +45,37 @@ public class ProgressButton extends View {
     private RotateAnimation mProgerssRotateAnim;
 
 
-    private String text = "Login in";
+    private String text = "";
+
+    private int bgColor = Color.RED;
+    public void setBgColor(int color)
+    {
+        this.bgColor=color;
+    }
+    private int textColor = Color.WHITE;
+    public void setTextColor(int color)
+    {
+        this.textColor=color;
+    }
+    private int proColor = Color.WHITE;
+    public void setProColor(int color)
+    {
+        this.proColor=color;
+    }
+
+    public void setButtonText(String s) {
+        this.text = s;
+        invalidate();
+    }
+
     private boolean mStop = false;
 
     public ProgressButton(Context context) {
-        super(context);
-        initPaint();
+        this(context, null);
     }
 
     public ProgressButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initPaint();
+        this(context, attrs, 0);
     }
 
     public ProgressButton(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -78,19 +98,16 @@ public class ProgressButton extends View {
         paintRectF = new Paint();
         paintRectF.setAntiAlias(true);
         paintRectF.setStyle(Paint.Style.FILL);
-        paintRectF.setColor(Color.RED);
         paintRectF.setStrokeWidth(mStrokeWidth);
 
 
         paintText = new Paint();
         paintText.setAntiAlias(true);
         paintText.setStyle(Paint.Style.FILL);
-        paintText.setColor(Color.WHITE);
         paintText.setTextSize(dip2px(15));
         paintPro = new Paint();
         paintPro.setAntiAlias(true);
         paintPro.setStyle(Paint.Style.STROKE);
-        paintPro.setColor(Color.WHITE);
         paintPro.setStrokeWidth(mStrokeWidth / 2);
 
     }
@@ -99,6 +116,9 @@ public class ProgressButton extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        paintText.setColor(textColor);
+        paintRectF.setColor(bgColor);
+        paintPro.setColor(proColor);
 
         RectF mRectF = new RectF();                           //RectF对象
         mRectF.left = mPadding + mSpac;
@@ -119,11 +139,15 @@ public class ProgressButton extends View {
             canvas.drawArc(mRectFPro, startAngle, 100, false, paintPro);
         }
 
-        if (mRectF.width() > getFontlength(paintText, text)) {
+
+        if (mSpac < (getMeasuredWidth() - getMeasuredHeight()) / 2.0f) {
+
+//        if (mRectF.width() > getFontlength(paintText, text)) {
             canvas.drawText(text,
                     getMeasuredWidth() / 2.0f - getFontlength(paintText, text) / 2.0f,
-                    getMeasuredHeight() / 2.0f + getFontHeight(paintText) / 3.0f,
+                    getMeasuredHeight() / 2.0f + getFontHeight(paintText, text) / 3.0f,
                     paintText);
+//        }
         }
 
     }
@@ -214,16 +238,19 @@ public class ProgressButton extends View {
     }
 
     public float getFontlength(Paint paint, String str) {
-        return paint.measureText(str);
+        Rect rect = new Rect();
+        paint.getTextBounds(str, 0, str.length(), rect);
+        return rect.width();
     }
 
-    public float getFontHeight(Paint paint) {
-        Paint.FontMetrics fm = paint.getFontMetrics();
-        return fm.descent - fm.ascent;
+    public float getFontHeight(Paint paint, String str) {
+        Rect rect = new Rect();
+        paint.getTextBounds(str, 0, str.length(), rect);
+        return rect.height();
+
     }
 
-    public interface OnStopAnim
-    {
+    public interface OnStopAnim {
         void Stop();
     }
 
